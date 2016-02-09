@@ -23,11 +23,11 @@ In the bottom right corner, the refresh button will reload your registrants to s
 #### Other Tables
 Scrolling lower, there are a few other tables for fun.
  1. Majors - I like looking at the different majors that have applied to HackISU, this counts the different majors and lists the participants from each. It's not very smart though, but hey, it's something.
- [Major Listing](/img/mymlhmajors.png)
+ ![Major Listing](/img/mymlhmajors.png)
  2. Schools - This shows the school people are from and could be a nice way of looking at the split between attendees from different schools.
- [School Listing](/img/mymlhschools.png)
+ ![School Listing](/img/mymlhschools.png)
  3. Shirt Sizes - Finally, no more tallying up the numbers. This aggregates shirt sizes for you, like it should.
- [Shirt Sizes](/img/mymlhshirts.png)
+ ![Shirt Sizes](/img/mymlhshirts.png)
 
 ## Updates
 Feel free to use this however you'd like. It made my life a bit easier, and hopefully it can do the same for you.
