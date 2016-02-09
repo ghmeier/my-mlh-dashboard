@@ -32,4 +32,4 @@ Scrolling lower, there are a few other tables for fun.
 ## Updates
 Feel free to use this however you'd like. It made my life a bit easier, and hopefully it can do the same for you.
 
-Also, I <3 people who make pull requests and open issues, so fire away!
+Also, I ♥ people who make pull requests and open issues, so fire away!
