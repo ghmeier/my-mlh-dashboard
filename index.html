@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <link href="http://oss.maxcdn.com/clusterize.js/0.15.0/clusterize.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style >
+    .sorting{
+        cursor:pointer;
+    }
+
+    .input-field{
+        display: none;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <div class="row">
+                <div class="col s4">
+                    <h5>Registrants:<span id="stats"></span></h5>
+                </div>
+                <div class="input-field col s3">
+                    <select id="search_column" class="validate">
+                      <option value="" disabled selected>Column</option>
+                      <option value="id">Id</option>
+                      <option value="email">Email</option>
+                      <option value="first_name">First</option>
+                      <option value="last_name">Last</option>
+                      <option value="major">Major</option>
+                      <option value="shirt_size">Shirt Size</option>
+                      <option value="dietary_restrictions">Dietary Restrictions</option>
+                      <option value="school_name">School</option>
+                    </select>
+                    <label>Column Select</label>
+                </div>
+                <div class="input-field col s4">
+                    <input placeholder="<regex_search_term>" id="search" type="text">
+                    <label for="search">Search</label>
+                </div>
+            </div>
+            <div class="row clusterize">
+                <div id="scrollArea" class="col s12 clusterize-scroll" style="max-height:700px">
+                    <table class="highlight">
+                        <thead>
+                            <tr>
+                                <th class="sorting" id="id">Id</th>
+                                <th class="sorting" id="email">Email</th>
+                                <th class="sorting" id="first_name">First</th>
+                                <th class="sorting" id="last_name">Last</th>
+                                <th class="sorting" id="major">Major</th>
+                                <th class="sorting" id="shirt_size">Shirt Size</th>
+                                <th class="sorting" id="dietary_restrictions">Dietary Restrictions</th>
+                                <th class="sorting" id="school_name">School</th>
+                            </tr>
+                        </thead>
+                      <tbody id="contentArea" class="clusterize-content">
+                        <tr class="clusterize-no-data">
+                            <td>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="progress">
+                        <div class="indeterminate"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section" style="">
+            <div class="row">
+                <div class="clusterize">
+                    <div id="majorScroll" class="col s12 clusterize-scroll" style="max-height:400px">
+                        <h5>Total Majors: <span id="totalmajors"></span></h5>
+                        <table class="highlight">
+                            <thead>
+                                <tr>
+                                    <th class="major_count" onclick="sortRefresh('major_count')">Major</th>
+                                    <th class="major_number" onclick="sortRefresh('major_number')">#</th>
+                                </tr>
+                            </thead>
+                            <tbody id="majorContent" class="clusterize-content">
+                                <tr class="clusterize-no-data">
+                                    <td>Loading data…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="clusterize">
+                    <div id="schoolScroll" class="col s12 clusterize-scroll" style="max-height:400px">
+                        <h5>Total Schools: <span id="totalschools"></span></h5>
+                        <table class="highlight">
+                            <thead>
+                                <tr>
+                                    <th class="school_count" onclick="sortRefresh('school_count')">School</th>
+                                    <th class="school_number" onclick="sortRefresh('school_number')">#</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schoolContent" class="clusterize-content">
+                                <tr class="clusterize-no-data">
+                                    <td>Loading data…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="clusterize">
+                    <div id="shirtsScroll" class="col s12 clusterize-scroll" style="max-height:400px">
+                        <table class="highlight">
+                                                <thead>
+                            <tr>
+                                <th class="shirt_count" onclick="sortRefresh('shirt_count')">Shirts</th>
+                                <th class="shirt_number" onclick="sortRefresh('shirt_number')">#</th>
+                            </tr>
+                        </thead>
+                          <tbody id="shirtsContent" class="clusterize-content">
+                            <tr class="clusterize-no-data">
+                              <td>Loading data…</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a id="refresh" class="waves-effect waves-light btn-large" style="position:fixed;bottom:45px;right:24px;"><i class="material-icons left">replay</i>Refresh</a>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="http://oss.maxcdn.com/clusterize.js/0.15.0/clusterize.min.js"></script>
+    <script src="http://underscorejs.org/underscore-min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script src="./functions.js"></script>
+
+    <script>
+        var APP_ID = "<APP_ID>";
+        var SECRET = "<SECRET>";
+        var mlhDash = new MyMlhDash(APP_ID,SECRET);
+
+        $(document).ready(function() {
+            $('select').material_select();
+
+            mlhDash.getMyMLHData();
+        });
+
+        $("#refresh").click(function(){
+            mlhDash.destroyData();
+            mlhDash.getMyMLHData();
+        });
+
+        $("#search").keyup(function(){
+            if (!$("#search_column").val() || $("#search_column").val() == ""){
+                return;
+            }
+
+            delay(function(){
+                var search_term = $("#search").val();
+                var col = $("#search_column").val();
+
+                mlhDash.searchData(col,search_term);
+
+            },300);
+        });
+
+        $("#search_column").change(function(){
+            if (!$("#search_column").val() || $("#search_column").val() == ""){
+                return;
+            }
+
+            var search_term = $("#search").val();
+            var col = $("#search_column").val();
+
+            mlhDash.searchData(col,search_term);
+        });
+
+        $(".sorting").click(function(e){
+            mlhDash.sortRefresh($(e.target).attr("id"));
+        });
+    </script>
+
+</body>
+</html>
