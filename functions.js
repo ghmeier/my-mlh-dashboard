@@ -82,44 +82,49 @@ MyMlhDash.prototype.getMyMLHData = function(){
     var self = this;
     $(".progress").show();
     $(".input-field").hide();
-    $.get("http://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
-        self.data = body.data;
-        self.data = self.sortBy(self.data,'id');
+    $.ajax({
+        url:"https://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,
+        method:"GET",
+        dataType:"json",
+        success: function(body){
+            self.data = body.data;
+            self.data = self.sortBy(self.data,'id');
 
-        var md = self.getTags(self.data);
-        $(".progress").hide();
-        $(".input-field").show();
+            var md = self.getTags(self.data);
+            $(".progress").hide();
+            $(".input-field").show();
 
-        self.clusterize = new Clusterize({
-          rows: md,
-          scrollId: 'scrollArea',
-          contentId: 'contentArea'
-      });
+            self.clusterize = new Clusterize({
+              rows: md,
+              scrollId: 'scrollArea',
+              contentId: 'contentArea'
+            });
 
-        self.schoolCluster = new Clusterize({
-            rows:self.getCountTags(self.schools),
-            scrollId:"schoolScroll",
-            contentId:"schoolContent"
-        });
+            self.schoolCluster = new Clusterize({
+                rows:self.getCountTags(self.schools),
+                scrollId:"schoolScroll",
+                contentId:"schoolContent"
+            });
 
-        self.sizeCluster = new Clusterize({
-            rows:self.getCountTags(self.sizes),
-            scrollId:"shirtsScroll",
-            contentId:"shirtsContent"
-        });
+            self.sizeCluster = new Clusterize({
+                rows:self.getCountTags(self.sizes),
+                scrollId:"shirtsScroll",
+                contentId:"shirtsContent"
+            });
 
-        self.majorCluster = new Clusterize({
-            rows:self.getCountTags(self.majors),
-            scrollId:"majorScroll",
-            contentId:"majorContent"
-        });
+            self.majorCluster = new Clusterize({
+                rows:self.getCountTags(self.majors),
+                scrollId:"majorScroll",
+                contentId:"majorContent"
+            });
 
-        var rows = self.clusterize.getRowsAmount();
-        $("#stats").text(rows);
-        var totalSchools = self.schoolCluster.getRowsAmount();
-        $("#totalschools").text(totalSchools);
-        var totalMajors = self.majorCluster.getRowsAmount();
-        $("#totalmajors").text(totalMajors);
+            var rows = self.clusterize.getRowsAmount();
+            $("#stats").text(rows);
+            var totalSchools = self.schoolCluster.getRowsAmount();
+            $("#totalschools").text(totalSchools);
+            var totalMajors = self.majorCluster.getRowsAmount();
+            $("#totalmajors").text(totalMajors);
+        }
     });
 }
 
