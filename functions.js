@@ -82,49 +82,103 @@ MyMlhDash.prototype.getMyMLHData = function(){
     var self = this;
     $(".progress").show();
     $(".input-field").hide();
-    $.ajax({
-        url:"https://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,
-        method:"GET",
-        dataType:"json",
-        success: function(body){
-            self.data = body.data;
-            self.data = self.sortBy(self.data,'id');
+    $.get("http://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
+        self.data = body.data;
+        self.data = self.sortBy(self.data,'id');
 
-            var md = self.getTags(self.data);
-            $(".progress").hide();
-            $(".input-field").show();
+        var md = self.getTags(self.data);
+        $(".progress").hide();
+        $(".input-field").show();
 
-            self.clusterize = new Clusterize({
-              rows: md,
-              scrollId: 'scrollArea',
-              contentId: 'contentArea'
-            });
+        self.clusterize = new Clusterize({
+          rows: md,
+          scrollId: 'scrollArea',
+          contentId: 'contentArea'
+      });
 
-            self.schoolCluster = new Clusterize({
-                rows:self.getCountTags(self.schools),
-                scrollId:"schoolScroll",
-                contentId:"schoolContent"
-            });
+        self.schoolCluster = new Clusterize({
+            rows:self.getCountTags(self.schools),
+            scrollId:"schoolScroll",
+            contentId:"schoolContent"
+        });
 
-            self.sizeCluster = new Clusterize({
-                rows:self.getCountTags(self.sizes),
-                scrollId:"shirtsScroll",
-                contentId:"shirtsContent"
-            });
+        self.sizeCluster = new Clusterize({
+            rows:self.getCountTags(self.sizes),
+            scrollId:"shirtsScroll",
+            contentId:"shirtsContent"
+        });
 
-            self.majorCluster = new Clusterize({
-                rows:self.getCountTags(self.majors),
-                scrollId:"majorScroll",
-                contentId:"majorContent"
-            });
+        self.majorCluster = new Clusterize({
+            rows:self.getCountTags(self.majors),
+            scrollId:"majorScroll",
+            contentId:"majorContent"
+        });
 
-            var rows = self.clusterize.getRowsAmount();
-            $("#stats").text(rows);
-            var totalSchools = self.schoolCluster.getRowsAmount();
-            $("#totalschools").text(totalSchools);
-            var totalMajors = self.majorCluster.getRowsAmount();
-            $("#totalmajors").text(totalMajors);
+        var rows = self.clusterize.getRowsAmount();
+        $("#stats").text(rows);
+        var totalSchools = self.schoolCluster.getRowsAmount();
+        $("#totalschools").text(totalSchools);
+        var totalMajors = self.majorCluster.getRowsAmount();
+        $("#totalmajors").text(totalMajors);
+
+        self.initRegistrantsChart();
+    });
+}
+
+MyMlhDash.prototype.initRegistrantsChart = function(){
+    var categories = {};
+    for (i=0;i<this.data.length;i++){
+        var updated_date = new Date(this.data[i].updated_at);
+        var datestring = updated_date.getFullYear()+""+updated_date.getMonth()+""+updated_date.getDate();
+        if (!categories[datestring]){
+            categories[datestring] = {};
+            categories[datestring].val = 0;
+            categories[datestring].name = updated_date.getFullYear()+"-"+updated_date.getMonth()+"-"+updated_date.getDate();
         }
+
+        categories[datestring].val++;
+    }
+
+    var names = [];
+    var vals = [];
+
+    for (i=0;i<Object.keys(categories).length;i++){
+        var key = Object.keys(categories)[i];
+
+        names.push(categories[key].name);
+        vals.push(categories[key].val);
+    }
+
+    $("#chart-container").highcharts({
+        chart:{
+            type:"line"
+        },
+        title:{
+            text:"Registrants over time"
+        },
+        xAxis:{
+            categories: names
+        },
+        yAxis:{
+            plotLines:[{
+                value:0,
+                width:1,
+                color:'#808080'
+            }]
+        },
+        tooltip:{
+            valueSuffix:"users"
+        },
+        legend:{
+            layout:"vertical",
+            align: "right",
+            verticalAlign: "middle",
+            borderWidth:0
+        },
+        series:[{
+            name:"Registrants",
+            data:vals
+        }]
     });
 }
 
