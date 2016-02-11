@@ -28,6 +28,8 @@ Scrolling lower, there are a few other tables for fun.
  ![School Listing](/img/mymlhschools.png)
  3. Shirt Sizes - Finally, no more tallying up the numbers. This aggregates shirt sizes for you, like it should.
  ![Shirt Sizes](/img/mymlhshirts.png)
+ 4. Registrants over time - You can view the number of people who registered for your event over time.
+ ![Registrants Over Time](/img/mymlhcharts.png)
 
 ## Updates
 Feel free to use this however you'd like. It made my life a bit easier, and hopefully it can do the same for you.
