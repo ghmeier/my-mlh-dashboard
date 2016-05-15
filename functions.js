@@ -28,14 +28,14 @@ MyMlhDash.prototype.getCountTags = function(data){
     var keys = Object.keys(data);
     var unordered = [];
 
-    for(i=0;i<keys.length;i++){
+    for(var i=0;i<keys.length;i++){
         unordered.push({name:keys[i],val:data[keys[i]]});
     }
     data = _.sortBy(unordered,function(item){
         return -item.val;
     });
 
-    for (i=0;i<unordered.length;i++){
+    for (var i=0;i<unordered.length;i++){
         var el = "<tr><td>"+data[i].name+"</td><td>"+data[i].val+"</td></tr>";
         md.push(el);
     }
@@ -45,7 +45,7 @@ MyMlhDash.prototype.getCountTags = function(data){
 
 MyMlhDash.prototype.getTags = function(data){
     var md = [];
-    for (i=0;i<data.length;i++){
+    for (var i=0;i<data.length;i++){
         var cur = data[i];
         cur.school_name = cur.school.name;
         var el = "<tr><td>"+cur.id+"</td><td>"+cur.email+"</td><td>"+cur.first_name+"</td><td>"+cur.last_name+"</td><td>"+cur.major+"</td><td>"+cur.shirt_size+"</td><td>"+cur.dietary_restrictions+"</td><td>"+cur.school_name+"</td></tr>";
@@ -54,7 +54,7 @@ MyMlhDash.prototype.getTags = function(data){
         var cur_size = cur.shirt_size.replace(/\s/g,"");
         var cur_school = cur.school_name.toLowerCase().replace(/\s/g,"");
 
-        for (j=0;j<major_list.length;j++){
+        for (var j=0;j<major_list.length;j++){
             var cur_major = major_list[j];
             if (!this.majors[cur_major]){
                 this.majors[cur_major] = 0;
@@ -185,10 +185,10 @@ MyMlhDash.prototype.initRegistrantsChart = function(){
 MyMlhDash.prototype.searchData = function(column,term){
     var matched = [];
 
-    for(i=0;i<this.data.length;i++){
-        if (column != "id" && this.data[i][column].search(new RegExp(term.toLowerCase(),"i")) == 0){
+    for(var i=0;i<this.data.length;i++){
+        if (column !== "id" && this.data[i][column].search(new RegExp(term.toLowerCase(),"i")) === 0){
             matched.push(this.data[i]);
-        }else if(column == "id" && this.data[i][column] == parseInt(term)){
+        }else if(column === "id" && this.data[i][column] === parseInt(term)){
             matched.push(this.data[i]);
         }
     }
