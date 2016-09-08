@@ -82,7 +82,7 @@ MyMlhDash.prototype.getMyMLHData = function(){
     var self = this;
     $(".progress").show();
     $(".input-field").hide();
-    $.get("http://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
+    $.get("https://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
         self.data = body.data;
         self.data = self.sortBy(self.data,'id');
 
