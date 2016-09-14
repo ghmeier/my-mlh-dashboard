@@ -34,7 +34,7 @@
     <div class="container">
         <div class="section">
             <div class="row">
-                <div class="col s4">
+                <div class="col s3">
                     <h5>Registrants:<span id="stats"></span></h5>
                 </div>
                 <div class="input-field col s3">
@@ -51,9 +51,12 @@
                     </select>
                     <label>Column Select</label>
                 </div>
-                <div class="input-field col s4">
+                <div class="input-field col s3">
                     <input placeholder="<regex_search_term>" id="search" type="text">
                     <label for="search">Search</label>
+                </div>
+                <div class="col s3">
+                <a id="download" class="waves-effect waves-light btn-large"><i class="material-icons left">replay</i>Download Checked</a>
                 </div>
             </div>
             <div class="row clusterize">
@@ -61,14 +64,46 @@
                     <table class="highlight">
                         <thead>
                             <tr>
-                                <th class="sorting" id="id">Id</th>
-                                <th class="sorting" id="email">Email</th>
-                                <th class="sorting" id="first_name">First</th>
-                                <th class="sorting" id="last_name">Last</th>
-                                <th class="sorting" id="major">Major</th>
-                                <th class="sorting" id="shirt_size">Shirt Size</th>
-                                <th class="sorting" id="dietary_restrictions">Dietary Restrictions</th>
-                                <th class="sorting" id="school_name">School</th>
+                                <th class="sorting" id="id">
+                                    Id
+                                    <input type="checkbox"  id="id-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="id-dn"></label>
+                                </th>
+                                <th class="sorting" id="email">
+                                    Email
+                                    <input type="checkbox"  id="email-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="email-dn"></label>
+                                </th>
+                                <th class="sorting" id="first_name">
+                                    First
+                                    <input type="checkbox"  id="first_name-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="first_name-dn"></label>
+                                </th>
+                                <th class="sorting" id="last_name">
+                                    Last
+                                    <input type="checkbox"  id="last_name-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="last_name-dn"></label>
+                                </th>
+                                <th class="sorting" id="major">
+                                    Major
+                                    <input type="checkbox"  id="major-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="major-dn"></label>
+                                </th>
+                                <th class="sorting" id="shirt_size">
+                                    Shirt
+                                    <input type="checkbox"  id="shirt_size-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="shirt_size-dn"></label>
+                                </th>
+                                <th class="sorting" id="dietary_restrictions">
+                                    Diet
+                                    <input type="checkbox"  id="dietary_restrictions-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="dietary_restrictions-dn"></label>
+                                </th>
+                                <th class="sorting" id="school_name">
+                                    School
+                                    <input type="checkbox"  id="school_name-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="school_name-dn"></label>
+                                </th>
                             </tr>
                         </thead>
                       <tbody id="contentArea" class="clusterize-content">
@@ -163,8 +198,8 @@
     <script src="./functions.js"></script>
 
     <script>
-        var APP_ID = "<APP_ID>";
-        var SECRET = "<SECRET>";
+        var APP_ID = "";
+        var SECRET = "";
         var mlhDash = new MyMlhDash(APP_ID,SECRET);
 
         $(document).ready(function() {
@@ -173,9 +208,39 @@
             mlhDash.getMyMLHData();
         });
 
-        $("#refresh").click(function(){
+        $("#refresh").click(function() {
             mlhDash.destroyData();
             mlhDash.getMyMLHData();
+        });
+
+        $("#download").click(function() {
+            var columns = [];
+            if (document.getElementById("id-dn").checked){
+                columns.push("id");
+            }
+            if (document.getElementById("email-dn").checked){
+                columns.push("email");
+            }
+            if (document.getElementById("first_name-dn").checked){
+                columns.push("first_name");
+            }
+            if (document.getElementById("last_name-dn").checked){
+                columns.push("last_name");
+            }
+            if (document.getElementById("major-dn").checked){
+                columns.push("major");
+            }
+            if (document.getElementById("shirt_size-dn").checked){
+                columns.push("shirt_size");
+            }
+            if (document.getElementById("dietary_restrictions-dn").checked){
+                columns.push("dietary_restrictions");
+            }
+            if (document.getElementById("school_name-dn").checked){
+                columns.push("school_name");
+            }
+
+            mlhDash.downloadData(columns);
         });
 
         $("#search").keyup(function(){

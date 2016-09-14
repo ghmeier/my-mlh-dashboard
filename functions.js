@@ -45,14 +45,15 @@ MyMlhDash.prototype.getCountTags = function(data){
 
 MyMlhDash.prototype.getTags = function(data){
     var md = [];
+    var keys = Object.keys(data[0]);
     for (var i=0;i<data.length;i++){
         var cur = data[i];
         cur.school_name = cur.school.name;
-        var el = "<tr><td>"+cur.id+"</td><td>"+cur.email+"</td><td>"+cur.first_name+"</td><td>"+cur.last_name+"</td><td>"+cur.major+"</td><td>"+cur.shirt_size+"</td><td>"+cur.dietary_restrictions+"</td><td>"+cur.school_name+"</td></tr>";
+        var el = "<tr><td>"+cur.mlh_id+"</td><td>"+cur.email+"</td><td>"+cur.first_name+"</td><td>"+cur.last_name+"</td><td>"+cur.major+"</td><td>"+cur.shirt_size+"</td><td>"+cur.dietary_restrictions+"</td><td>"+cur.school_name+"</td><td>"+cur.github+"</td><td>"+cur.resume+"</td></tr>";
 
-        var major_list = cur.major.toLowerCase().replace(/\s/g,"").split(",");
+        var major_list = cur.major.split(",");
         var cur_size = cur.shirt_size.replace(/\s/g,"");
-        var cur_school = cur.school_name.toLowerCase().replace(/\s/g,"");
+        var cur_school = cur.school_name;
 
         for (var j=0;j<major_list.length;j++){
             var cur_major = major_list[j];
@@ -82,9 +83,10 @@ MyMlhDash.prototype.getMyMLHData = function(){
     var self = this;
     $(".progress").show();
     $(".input-field").hide();
-    $.get("http://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
+    $.get("https://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
+    //$.get("https://hackisu-signup.herokuapp.com/getAllUsers?token="+"tacocat", function(body) {
         self.data = body.data;
-        self.data = self.sortBy(self.data,'id');
+        self.data = self.sortBy(self.data,'mlh_id');
 
         var md = self.getTags(self.data);
         $(".progress").hide();
@@ -194,7 +196,32 @@ MyMlhDash.prototype.searchData = function(column,term){
     }
 
     var md = this.getTags(matched);
+    this.matched = matched;
     this.clusterize.update(md);
+}
+
+MyMlhDash.prototype.downloadData = function(columns) {
+    var text = "";
+    var data = this.data;
+    if (data.length < 0) {
+        return;
+    }
+    if (this.matched) {
+        data = matched;
+    }
+
+    text += columns.join(",") + "\n";
+    for (var i=0;i<data.length; i++) {
+        var obj = data[i];
+        for (var j=0;j<columns.length; j++) {
+            text += obj[columns[j]] + ",";
+        }
+        text += "\n";
+    }
+
+    var filename = new Date(Date.now()).toLocaleString();
+    filename = "mymlh-"+filename;
+    download(filename, text);
 }
 
 MyMlhDash.prototype.destroyData = function(){
@@ -211,6 +238,21 @@ MyMlhDash.prototype.destroyData = function(){
     $("#totalschools").text("");
     $("#totalmajors").text("");
 }
+
+var download = function(name, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute("href","data:text/csv;charset=utf-8,"+encodeURIComponent(text));
+    pom.setAttribute("download",name);
+    pom.setAttribute("target","_blank");
+
+    if (document.createEvent){
+        var event = document.createEvent("MouseEvents");
+        event.initEvent('click',true,true);
+        pom.dispatchEvent(event);
+    } else {
+        pom.click();
+    }
+};
 
 var delay = (function(){
     var timer = 0;
