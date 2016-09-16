@@ -46,45 +46,104 @@ MyMlhDash.prototype.getCountTags = function(data){
 MyMlhDash.prototype.getTags = function(data){
     var md = [];
     var keys = Object.keys(data[0]);
+    for (var i=0;i<keys.length;i++) {
+        if (keys[i]) {
+            $("#"+keys[i]).show();
+        }
+    }
     for (var i=0;i<data.length;i++){
         var cur = data[i];
+        if (!cur.school){
+            console.log(cur, i);
+        }
         cur.school_name = cur.school.name;
-        var el = "<tr><td>"+cur.mlh_id+"</td><td>"+cur.email+"</td><td>"+cur.first_name+"</td><td>"+cur.last_name+"</td><td>"+cur.major+"</td><td>"+cur.shirt_size+"</td><td>"+cur.dietary_restrictions+"</td><td>"+cur.school_name+"</td><td>"+cur.github+"</td><td>"+cur.resume+"</td></tr>";
+        var el = "";
 
-        var major_list = cur.major.split(",");
-        var cur_size = cur.shirt_size.replace(/\s/g,"");
-        var cur_school = cur.school_name;
-
-        for (var j=0;j<major_list.length;j++){
-            var cur_major = major_list[j];
-            if (!this.majors[cur_major]){
-                this.majors[cur_major] = 0;
+        if (typeof cur.checked_in === "boolean"){
+            var checked_in = "<td><input onclick='checkIn(\""+cur.mlh_id+"\")' type='checkbox'  id='"+cur.mlh_id+"'";
+            if (cur.checked_in){
+                checked_in += "checked";
             }
-            this.majors[cur_major]++;
+            checked_in += "/><label style='height:15px;margin-left:0px;padding-left:0px' for='"+cur.mlh_id+"'></label>";
+            el += checked_in;
+        }
+        if (cur.email){
+            el += "<td>"+cur.email+"</td>";
+        }
+        if (cur.first_name){
+            el += "<td>"+cur.first_name+"</td>";
+        }
+        if (cur.last_name){
+            el += "<td>"+cur.last_name+"</td>";
+        }
+        if (cur.major){
+           el += "<td>"+cur.major+"</td>";
+        }
+        if (cur.shirt_size) {
+            el += "<td>"+cur.shirt_size+"</td>";
+        }
+        if (cur.dietary_restrictions) {
+            el += "<td>"+cur.dietary_restrictions+"</td>";
+        }
+        if (cur.school_name){
+            el += "<td>"+cur.school_name+"</td>";
+        }
+        if (cur.phone_number) {
+            el += "<td>"+cur.phone_number+"</td>";
+        }
+        if (cur.github) {
+            var uname = cur.github.split("/").pop();
+            el += "<td><a href='https://github.com/"+uname+"' target='_blank'>"+uname+"</a></td>";
+        }else {
+            el += "<td></td>";
         }
 
-        if (!this.sizes[cur_size]){
-            this.sizes[cur_size] = 0;
+        if (cur.resume) {
+            el += "<td><a href='"+cur.resume+"' target='_blank'>Resume</a></td>";
+        } else {
+            el += "<td></td>";
+        }
+        el += "</tr>";
+
+
+        if (cur.major){
+            var major_list = cur.major.split(",");
+            for (var j=0;j<major_list.length;j++){
+                var cur_major = major_list[j];
+                if (!this.majors[cur_major]){
+                    this.majors[cur_major] = 0;
+                }
+                this.majors[cur_major]++;
+            }
         }
 
-        if (!this.schools[cur_school]){
-            this.schools[cur_school] = 0;
+        if( cur.shirt_size){
+            var cur_size = cur.shirt_size.replace(/\s/g,"");
+            if (!this.sizes[cur_size]){
+                this.sizes[cur_size] = 0;
+            }
+            this.sizes[cur_size]++;
         }
 
-        this.sizes[cur_size]++;
-        this.schools[cur_school]++;
+        if (cur.school_name){
+            var cur_school = cur.school_name;
+            if (!this.schools[cur_school]){
+                this.schools[cur_school] = 0;
+            }
+            this.schools[cur_school]++;
+        }
         md.push(el);
     }
 
     return md;
 }
 
-MyMlhDash.prototype.getMyMLHData = function(){
+MyMlhDash.prototype.getMyMLHData = function(token){
     var self = this;
     $(".progress").show();
     $(".input-field").hide();
-    $.get("https://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
-    //$.get("https://hackisu-signup.herokuapp.com/getAllUsers?token="+"tacocat", function(body) {
+    //$.get("https://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
+    $.get("https://hackisu-signup.herokuapp.com/getAllUsers?token="+token, function(body) {
         self.data = body.data;
         self.data = self.sortBy(self.data,'mlh_id');
 
@@ -196,6 +255,7 @@ MyMlhDash.prototype.searchData = function(column,term){
     }
 
     var md = this.getTags(matched);
+    $("#stats").text(matched.length);
     this.matched = matched;
     this.clusterize.update(md);
 }
@@ -254,6 +314,21 @@ var download = function(name, text) {
     }
 };
 
+var checkIn = function(id){
+    console.log(id);
+    var checked_in = $("#"+id).is(':checked');
+    $.ajax({
+        url: "http://hackisu-signup.herokuapp.com/checkIn",
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({id:id,checked_in:checked_in}),
+        success: function(data) {
+            console.log(data);
+        }
+    });
+}
+
 var delay = (function(){
     var timer = 0;
     return function(callback, ms){
@@ -261,3 +336,18 @@ var delay = (function(){
         timer = setTimeout(callback, ms);
     };
 })();
+
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};

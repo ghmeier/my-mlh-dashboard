@@ -31,7 +31,7 @@
           </div>
         </nav>
     </div>
-    <div class="container">
+    <div class="container" style="width:90%">
         <div class="section">
             <div class="row">
                 <div class="col s3">
@@ -40,7 +40,6 @@
                 <div class="input-field col s3">
                     <select id="search_column" class="validate">
                       <option value="" disabled selected>Column</option>
-                      <option value="id">Id</option>
                       <option value="email">Email</option>
                       <option value="first_name">First</option>
                       <option value="last_name">Last</option>
@@ -64,45 +63,60 @@
                     <table class="highlight">
                         <thead>
                             <tr>
-                                <th class="sorting" id="id">
-                                    Id
-                                    <input type="checkbox"  id="id-dn" />
-                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="id-dn"></label>
+                                <th class="sorting" id="checked_in" style="display:none">
+                                    In
+                                    <input type="checkbox"  id="checked_in-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="checked_in-dn"></label>
                                 </th>
-                                <th class="sorting" id="email">
+                                <th class="sorting" id="email" style="display:none">
                                     Email
                                     <input type="checkbox"  id="email-dn" />
                                     <label style="height:15px;margin-left:0px;padding-left:0px" for="email-dn"></label>
                                 </th>
-                                <th class="sorting" id="first_name">
+                                <th class="sorting" id="first_name" style="display:none">
                                     First
                                     <input type="checkbox"  id="first_name-dn" />
                                     <label style="height:15px;margin-left:0px;padding-left:0px" for="first_name-dn"></label>
                                 </th>
-                                <th class="sorting" id="last_name">
+                                <th class="sorting" id="last_name" style="display:none">
                                     Last
                                     <input type="checkbox"  id="last_name-dn" />
                                     <label style="height:15px;margin-left:0px;padding-left:0px" for="last_name-dn"></label>
                                 </th>
-                                <th class="sorting" id="major">
+                                <th class="sorting" id="major" style="display:none">
                                     Major
                                     <input type="checkbox"  id="major-dn" />
                                     <label style="height:15px;margin-left:0px;padding-left:0px" for="major-dn"></label>
                                 </th>
-                                <th class="sorting" id="shirt_size">
+                                <th class="sorting" id="shirt_size" style="display:none">
                                     Shirt
                                     <input type="checkbox"  id="shirt_size-dn" />
                                     <label style="height:15px;margin-left:0px;padding-left:0px" for="shirt_size-dn"></label>
                                 </th>
-                                <th class="sorting" id="dietary_restrictions">
+                                <th class="sorting" id="dietary_restrictions" style="display:none">
                                     Diet
                                     <input type="checkbox"  id="dietary_restrictions-dn" />
                                     <label style="height:15px;margin-left:0px;padding-left:0px" for="dietary_restrictions-dn"></label>
                                 </th>
-                                <th class="sorting" id="school_name">
+                                <th class="sorting" id="school" style="display:none">
                                     School
                                     <input type="checkbox"  id="school_name-dn" />
                                     <label style="height:15px;margin-left:0px;padding-left:0px" for="school_name-dn"></label>
+                                </th>
+                                <th class="sorting" id="phone_number" style="display:none">
+                                    Phone
+                                    <input type="checkbox"  id="phone_number-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="phone_number-dn"></label>
+                                </th>
+                                <th class="sorting" id="github" style="display:none">
+                                    Github
+                                    <input type="checkbox"  id="github-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="github-dn"></label>
+                                </th>
+                                <th class="sorting" id="resume" style="display:none">
+                                    Resume
+                                    <input type="checkbox"  id="resume-dn" />
+                                    <label style="height:15px;margin-left:0px;padding-left:0px" for="resume-dn"></label>
                                 </th>
                             </tr>
                         </thead>
@@ -201,23 +215,22 @@
         var APP_ID = "";
         var SECRET = "";
         var mlhDash = new MyMlhDash(APP_ID,SECRET);
+        var token = null;
 
         $(document).ready(function() {
             $('select').material_select();
+            var token = getUrlParameter("token");
 
-            mlhDash.getMyMLHData();
+            mlhDash.getMyMLHData(token);
         });
 
         $("#refresh").click(function() {
             mlhDash.destroyData();
-            mlhDash.getMyMLHData();
+            mlhDash.getMyMLHData(token);
         });
 
         $("#download").click(function() {
             var columns = [];
-            if (document.getElementById("id-dn").checked){
-                columns.push("id");
-            }
             if (document.getElementById("email-dn").checked){
                 columns.push("email");
             }
@@ -239,6 +252,15 @@
             if (document.getElementById("school_name-dn").checked){
                 columns.push("school_name");
             }
+            if (document.getElementById("phone_number-dn").checked){
+                columns.push("phone_number");
+            }
+            if (document.getElementById("github-dn").checked){
+                columns.push("github");
+            }
+            if (document.getElementById("resume-dn").checked){
+                columns.push("resume");
+            }
 
             mlhDash.downloadData(columns);
         });
@@ -255,6 +277,10 @@
                 mlhDash.searchData(col,search_term);
 
             },300);
+        });
+
+        $(".checked_in_box").click(function(e) {
+            console.log(e.target);
         });
 
         $("#search_column").change(function(){
