@@ -261,6 +261,9 @@
             if (document.getElementById("resume-dn").checked){
                 columns.push("resume");
             }
+            if (document.getElementById("checked_in-dn").checked){
+                columns.push("checked_in");
+            }
 
             mlhDash.downloadData(columns);
         });

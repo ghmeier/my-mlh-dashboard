@@ -45,6 +45,7 @@ MyMlhDash.prototype.getCountTags = function(data){
 
 MyMlhDash.prototype.getTags = function(data){
     var md = [];
+    console.log(data[0]);
     var keys = Object.keys(data[0]);
     for (var i=0;i<keys.length;i++) {
         if (keys[i]) {
@@ -140,12 +141,20 @@ MyMlhDash.prototype.getTags = function(data){
 
 MyMlhDash.prototype.getMyMLHData = function(token){
     var self = this;
+    var url = "http://hackisu-signup.herokuapp.com/getAllUsers?token="+token;
+    if (token === "sponsor") {
+        url += "&checked_in=true";
+    }
     $(".progress").show();
     $(".input-field").hide();
     //$.get("https://my.mlh.io/api/v1/users?client_id="+this.APP_ID+"&secret="+this.SECRET,function(body){
-    $.get("https://hackisu-signup.herokuapp.com/getAllUsers?token="+token, function(body) {
+    $.get(url, function(body) {
         self.data = body.data;
-        self.data = self.sortBy(self.data,'mlh_id');
+        if (!self.data){
+            Materialize.toast('No data Available, try reloading!', 2000)
+            return;
+        }
+        self.data = self.sortBy(self.data,'checked_in').reverse();
 
         var md = self.getTags(self.data);
         $(".progress").hide();
@@ -318,7 +327,7 @@ var checkIn = function(id){
     console.log(id);
     var checked_in = $("#"+id).is(':checked');
     $.ajax({
-        url: "http://hackisu-signup.herokuapp.com/checkIn",
+        url: "http://localhost:5000/checkIn",
         type: "POST",
         dataType: "json",
         contentType: "application/json",
