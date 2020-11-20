@@ -7,7 +7,7 @@ Set the `APP_ID` and `SECRET` in index.html to your MyMLH client id and secret. 
 Open up index.html in your browser and have a look.
 ![Example Dash](/img/mymlhdash.png)
 
-##Usage
+## Usage
 The top bar shows the number of registrants (through MyMLH) and allows you to filter the results. 
 
 **To filter results:**
